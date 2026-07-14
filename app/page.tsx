@@ -71,19 +71,36 @@ export default function Home() {
   }, [reduced]);
 
   useEffect(() => {
-    const onResize = () => { requestAnimationFrame(measure); };
-    const ro = new ResizeObserver(() => requestAnimationFrame(measure));
+    let lastWidth = window.innerWidth;
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== lastWidth) {
+        lastWidth = currentWidth;
+        requestAnimationFrame(measure);
+      }
+    };
+
+    const ro = new ResizeObserver(() => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== lastWidth) {
+        lastWidth = currentWidth;
+        requestAnimationFrame(measure);
+      }
+    });
+
     if (heroPlaceholderRef.current)  ro.observe(heroPlaceholderRef.current);
     if (aboutPlaceholderRef.current) ro.observe(aboutPlaceholderRef.current);
     if (typeof document !== "undefined" && document.body) {
       ro.observe(document.body);
     }
-    window.addEventListener("resize", onResize);
-    window.addEventListener("load", onResize);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("load", () => { requestAnimationFrame(measure); });
+
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("load", onResize);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("load", () => { requestAnimationFrame(measure); });
     };
   }, []);
 
@@ -97,7 +114,7 @@ export default function Home() {
         {/* Only render FloatingProfileCard once coordinates are measured to ensure clean mounting */}
         {visible && (
           <FloatingProfileCard
-            key={`${coords.hero.top}-${coords.hero.left}-${coords.about.top}-${coords.about.left}`}
+            key="floating-profile-card"
             coords={coords}
             reduced={reduced}
           />

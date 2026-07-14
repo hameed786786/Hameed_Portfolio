@@ -232,5 +232,12 @@ body {
   #skills .mobile-anchor {
     margin-top: 1.5rem !important;
   }
+
+  /* Align skill cards in a neat 2-column grid on mobile for optimal spacing and balance */
+  #skills .md\:hidden .flex-wrap {
+    display: grid !important;
+    grid-template-columns: repeat(2, 80px) !important;
+    gap: 12px !important;
+  }
 }
 

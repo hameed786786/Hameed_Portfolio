@@ -11,6 +11,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 // ── ACCURATE BRAND LOGO SVGs (Official brand geometries) ──
@@ -343,7 +344,7 @@ function SpiderIcon({ className }: { className?: string }) {
 // ── MAIN SKILLS SECTION ──
 
 export default function Skills() {
-  // Mobile responsive layout coordinate rebuild trigger
+  // Mobile responsive layout scroll scrub config trigger
   const containerRef = useRef<HTMLDivElement>(null);
   const pathRef        = useRef<SVGPathElement>(null);
   const glowPathRef    = useRef<SVGPathElement>(null);
@@ -358,8 +359,13 @@ export default function Skills() {
 
   useEffect(() => {
     setMounted(true);
+    let lastWidth = window.innerWidth;
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== lastWidth) {
+        lastWidth = currentWidth;
+        setIsMobile(currentWidth < 768);
+      }
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -491,8 +497,8 @@ export default function Skills() {
             trigger: firstRow,
             start: "top 40%",
             endTrigger: lastRow,
-              end: isMobile ? "bottom 95%" : "bottom 85%",
-            scrub: 1.2,
+            end: isMobile ? "bottom 70%" : "bottom 85%",
+            scrub: isMobile ? true : 1.2,
           },
         });
 
