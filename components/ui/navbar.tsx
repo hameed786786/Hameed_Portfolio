@@ -82,7 +82,7 @@ export default function Navbar() {
     : { duration: 0.42, ease: [0.4, 0, 0.2, 1] as const };
 
   return (
-    <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2">
+    <div className="fixed top-5 left-1/2 z-50 -translate-x-1/2">
       <motion.nav
         initial={{ height: 64, borderRadius: 24 }}
         animate={{ height: open ? 312 : 64 }}
