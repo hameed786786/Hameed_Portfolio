@@ -1,26 +1,231 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Colors */
+  --color-paper:       #F6F3EE;
+  --color-ink:         #111111;
+  --color-secondary:   #444444;
+  --color-muted:       #777777;
+  --color-border:      rgba(0, 0, 0, 0.08);
+  --color-card:        #FFFFFF;
+  --color-dark:        #0E0E0E;
+  --color-accent:      #1F3A5F;
+
+  /* Nav specific */
+  --color-nav-bg:      #111111;
+  --color-nav-text:    #F6F3EE;
+  --color-nav-pill-bg: #F6F3EE;
+  --color-nav-pill-text: #111111;
+
+  /* Typography scale — fluid via clamp() */
+  --text-hero:         clamp(4rem, 14vw, 13rem);
+  --text-section:      clamp(2rem, 5vw, 4rem);
+  --text-card-title:   clamp(1.25rem, 2.5vw, 2rem);
+  --text-body:         clamp(1rem, 1.5vw, 1.125rem);
+  --text-caption:      clamp(0.7rem, 1vw, 0.8125rem);
+  --text-nav:          1.125rem;
+
+  /* Spacing tokens */
+  --spacing-section:   160px;
+  --spacing-content:   80px;
+  --spacing-grid:      32px;
+  --spacing-card:      32px;
+
+  /* Radius */
+  --radius-card:       24px;
+  --radius-pill:       9999px;
+  --radius-nav:        20px;
+
+  /* Shadows */
+  --shadow-soft:       0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lift:       0 16px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-nav:        0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.dark {
+  /* Colors */
+  --color-paper:       #0E0E0E;
+  --color-ink:         #F6F3EE;
+  --color-secondary:   #A0A0A0;
+  --color-muted:       #666666;
+  --color-border:      rgba(255, 255, 255, 0.08);
+  --color-card:        #1A1A1A;
+
+  /* Nav specific */
+  --color-nav-bg:      #FFFFFF;
+  --color-nav-text:    #111111;
+  --color-nav-pill-bg: #111111;
+  --color-nav-pill-text: #FFFFFF;
+}
+
+body, section, main, nav, button {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --font-sans: var(--font-clash-display);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body, button, input, select, textarea, a, p, span, h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-clash-display), system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Hide the static fallback image in the hero section when the interactive floating profile card takes over */
+[data-card-active="true"] img {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Sleek modern custom scrollbar for premium theme */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+  border-radius: 9999px;
+  border: 2px solid var(--color-paper);
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Custom scrollbar for Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.25) var(--color-paper);
+}
+
+/* ─── Mobile Responsiveness Adjustments (Max Width: 768px) ──── */
+@media (max-width: 768px) {
+  :root {
+    --spacing-section: 80px;
+    --spacing-content: 40px;
+    --spacing-grid: 24px;
+  }
+
+  /* Prevent horizontal navbar overflow on narrow screens */
+  .fixed.top-6.left-1\/2 > nav,
+  .fixed.top-6.left-1\/2 > div,
+  .fixed.top-6 nav {
+    width: calc(100vw - 32px) !important;
+    max-width: 340px !important;
+  }
+
+  /* Soften typography layout on mobile grid items */
+  #about .grid {
+    grid-template-cols: 1fr !important;
+    text-align: center !important;
+  }
+
+  #about .grid > div {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* Scale down hero typography and center contents on mobile to prevent overlapping */
+  #hero {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  #hero > div {
+    justify-content: center !important;
+    padding-top: 140px !important;
+    padding-bottom: 40px !important;
+    flex: none !important;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
+    line-height: 0.95 !important;
+  }
+
+  /* Add space between text and portrait on mobile */
+  #hero .mt-8,
+  .mt-8 {
+    margin-top: 56px !important;
+  }
+
+  /* Adjust float symbols on mobile to avoid overlapping content */
+  #hero .left-1,
+  .left-1 {
+    width: 54px !important;
+    left: 12px !important;
+    top: 40% !important;
+  }
+
+  #hero .right-0,
+  .right-0 {
+    width: 80px !important;
+    right: 5px !important;
+    top: 72% !important;
+    bottom: auto !important;
+  }
+
+  /* Force absolute symbol image tags to scale to their parent containers */
+  #hero .left-1 img,
+  .left-1 img,
+  #hero .right-0 img,
+  .right-0 img {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Increase mobile skills section padding-left to avoid spider clipping */
+  #skills {
+    padding-left: 32px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Increase gap between mobile timeline and content cards to clear spider width */
+  #skills .md\:hidden {
+    gap: 2.25rem !important;
+  }
+
+  /* Add margin-left to mobile content column to separate from timeline */
+  #skills .md\:hidden > .flex-1 {
+    margin-left: 12px !important;
+  }
+}
+
