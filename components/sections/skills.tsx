@@ -546,11 +546,11 @@ export default function Skills() {
       {/* ── CONTENT CONTAINER ── */}
       <div className="relative mx-auto w-full max-w-[1440px] z-10 flex flex-col items-center">
         {/* Title Block */}
-        <div className="text-center max-w-3xl mx-auto" style={{ marginBottom: "3rem" }}>
-          <h2 className="font-sans font-black text-4xl sm:text-5xl md:text-6xl text-[var(--color-ink)] tracking-[-0.03em] mb-6 uppercase">
+        <div className="text-center max-w-[1000px] mx-auto" style={{ marginBottom: "4rem" }}>
+          <h2 className="font-sans font-black text-4xl sm:text-5xl md:text-6xl text-[var(--color-ink)] tracking-[0.005em] mb-6 uppercase">
             Skills &amp; Technologies
           </h2>
-          <p className="text-[var(--color-secondary)] font-sans font-medium text-[15px] sm:text-[17px] leading-relaxed">
+          <p className="text-[var(--color-secondary)] font-sans font-medium text-[15px] sm:text-[17px] leading-relaxed ">
             A curated set of technologies and tools I use to build scalable, performant, and beautiful web experiences.
           </p>
         </div>
@@ -636,7 +636,7 @@ export default function Skills() {
                   {/* Category Content Column */}
                   <div className={`flex flex-col gap-4 w-auto ${isEven ? "items-start" : "items-start text-left"}`}>
                     <div className={`flex flex-col ${isEven ? "items-start" : "items-start"}`}>
-                      <h3 className="font-sans font-black text-3xl text-[var(--color-ink)] uppercase leading-none tracking-tight">
+                      <h3 className="font-sans font-black text-3xl text-[var(--color-ink)] uppercase leading-none ">
                         {category.title}
                       </h3>
                     </div>

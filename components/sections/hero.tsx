@@ -129,7 +129,7 @@ export default function Hero({ placeholderRef }: HeroProps) {
 
           top-[34%]
           sm:top-[36%]
-          lg:top-[40%]
+          lg:top-[80%]
 
           -translate-y-[85%]
 
