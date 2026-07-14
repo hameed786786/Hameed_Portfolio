@@ -343,6 +343,7 @@ function SpiderIcon({ className }: { className?: string }) {
 // ── MAIN SKILLS SECTION ──
 
 export default function Skills() {
+  // Mobile responsive layout coordinate rebuild trigger
   const containerRef = useRef<HTMLDivElement>(null);
   const pathRef        = useRef<SVGPathElement>(null);
   const glowPathRef    = useRef<SVGPathElement>(null);
@@ -387,20 +388,35 @@ export default function Skills() {
 
   useEffect(() => {
     if (!mounted) return;
+    
+    let lastWidth = window.innerWidth;
+    
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== lastWidth) {
+        lastWidth = currentWidth;
+        updateCoords();
+      }
+    };
+
     const timer = setTimeout(updateCoords, 150);
 
     let observer: ResizeObserver | null = null;
     if (containerRef.current) {
       observer = new ResizeObserver(() => {
-        updateCoords();
+        const currentWidth = window.innerWidth;
+        if (currentWidth !== lastWidth) {
+          lastWidth = currentWidth;
+          updateCoords();
+        }
       });
       observer.observe(containerRef.current);
     }
 
-    window.addEventListener("resize", updateCoords);
+    window.addEventListener("resize", handleResize);
     return () => {
       clearTimeout(timer);
-      window.removeEventListener("resize", updateCoords);
+      window.removeEventListener("resize", handleResize);
       if (observer) {
         observer.disconnect();
       }
@@ -423,92 +439,86 @@ export default function Skills() {
   useEffect(() => {
     if (!mounted || !containerRef.current || !pathD || dotCoords.length === 0) return;
 
-    let ctx: gsap.Context;
+    const ctx = gsap.context(() => {
+      // 1. Reveal category rows when scroll reaches them
+      const rows = gsap.utils.toArray(".category-row") as HTMLElement[];
+      rows.forEach((row) => {
+        gsap.fromTo(
+          row,
+          { opacity: 0, y: 50, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: row,
+              start: "top 90%", // when top of the row hits 90% of viewport
+              toggleActions: "play none none none",
+              once: true,
+            },
+          }
+        );
+      });
 
-    const timer = setTimeout(() => {
-      ctx = gsap.context(() => {
-        // 1. Reveal category rows when scroll reaches them
-        const rows = gsap.utils.toArray(".category-row") as HTMLElement[];
-        rows.forEach((row) => {
-          gsap.fromTo(
-            row,
-            { opacity: 0, y: 50, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.8,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: row,
-                start: "top 80%", // when top of the row hits 80% of viewport
-                toggleActions: "play none none none",
-                once: true,
-              },
-            }
-          );
+      // 2. Animate the star icon along the invisible zigzag path on scroll
+      const pathElement = pathRef.current;
+      const glowElement = glowPathRef.current;
+      const starElement = starRef.current;
+      if (pathElement && glowElement && starElement && !reduced) {
+        // Initialize path stroke dash offset
+        const length = pathElement.getTotalLength();
+        gsap.set([pathElement, glowElement], {
+          strokeDasharray: length,
+          strokeDashoffset: length,
         });
 
-        // 2. Animate the star icon along the invisible zigzag path on scroll
-        const pathElement = pathRef.current;
-        const glowElement = glowPathRef.current;
-        const starElement = starRef.current;
-        if (pathElement && glowElement && starElement && !reduced) {
-          // Initialize path stroke dash offset
-          const length = pathElement.getTotalLength();
-          gsap.set([pathElement, glowElement], {
-            strokeDasharray: length,
-            strokeDashoffset: length,
-          });
+        // Position the star at the first point immediately on load
+        gsap.set(starElement, {
+          x: dotCoords[0].x,
+          y: dotCoords[0].y,
+          xPercent: -50,
+          yPercent: -50,
+          transformOrigin: "50% 50%",
+        });
 
-          // Position the star at the first point immediately on load
-          gsap.set(starElement, {
-            x: dotCoords[0].x,
-            y: dotCoords[0].y,
-            xPercent: -50,
-            yPercent: -50,
-            transformOrigin: "50% 50%",
-          });
+        const firstRow = rows[0];
+        const lastRow = rows[rows.length - 1];
 
-          const firstRow = rows[0];
-          const lastRow = rows[rows.length - 1];
-
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: firstRow,
-              start: "top 53%",
-              endTrigger: lastRow,
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: firstRow,
+            start: "top 40%",
+            endTrigger: lastRow,
               end: isMobile ? "bottom 95%" : "bottom 85%",
-              scrub: 1.2,
-              invalidateOnRefresh: true,
-            },
-          });
+            scrub: 1.2,
+          },
+        });
 
-          // Animate active path drawing
-          tl.to([pathElement, glowElement], {
-            strokeDashoffset: 0,
-            ease: "none",
-            duration: 1,
-          }, 0);
+        // Animate active path drawing
+        tl.to([pathElement, glowElement], {
+          strokeDashoffset: 0,
+          ease: "none",
+          duration: 1,
+        }, 0);
 
-          // Animate star traveling
-          tl.to(starElement, {
-            ease: "none",
-            duration: 1,
-            immediateRender: true,
-            motionPath: {
-              path: pathElement,
-              align: pathElement,
-              alignOrigin: [0.5, 0.5],
-              autoRotate: false,
-            },
-          }, 0);
-        }
-      }, containerRef);
-    }, 50);
+        // Animate star traveling
+        tl.to(starElement, {
+          ease: "none",
+          duration: 1,
+          immediateRender: true,
+          motionPath: {
+            path: pathElement,
+            align: pathElement,
+            alignOrigin: [0.5, 0.5],
+            autoRotate: false,
+          },
+        }, 0);
+      }
+    }, containerRef);
 
     return () => {
-      clearTimeout(timer);
       if (ctx) ctx.revert();
     };
   }, [mounted, pathD, dotCoords, reduced, isMobile]);

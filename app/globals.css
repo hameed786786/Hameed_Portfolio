@@ -227,5 +227,10 @@ body {
   #skills .md\:hidden > .flex-1 {
     margin-left: 12px !important;
   }
+
+  /* Move mobile timeline anchor lower to align spider vertically next to category title */
+  #skills .mobile-anchor {
+    margin-top: 1.5rem !important;
+  }
 }
 
