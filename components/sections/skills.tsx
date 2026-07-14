@@ -278,7 +278,7 @@ function SkillCard({ skill }: { skill: Skill }) {
     >
       {/* Tooltip */}
       <div className="
-        pointer-events-none absolute top-full mt-3 left-1/2 -translate-x-1/2
+        pointer-events-none absolute top-full mt-10 left-1/2 -translate-x-1/2
         text-[var(--color-ink)]
         font-mono text-[12px] font-bold uppercase tracking-widest whitespace-nowrap
         opacity-0 scale-95 -translate-y-1
@@ -476,9 +476,9 @@ export default function Skills() {
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: firstRow,
-              start: "top 40%",
+              start: "top 53%",
               endTrigger: lastRow,
-              end: "bottom 85%",
+              end: isMobile ? "bottom 95%" : "bottom 85%",
               scrub: 1.2,
               invalidateOnRefresh: true,
             },
