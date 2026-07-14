@@ -232,12 +232,32 @@ body {
   #skills .mobile-anchor {
     margin-top: 1.5rem !important;
   }
+}
 
-  /* Align skill cards in a neat 2-column grid on mobile for optimal spacing and balance */
-  #skills .md\:hidden .flex-wrap {
-    display: grid !important;
-    grid-template-columns: repeat(2, 80px) !important;
-    gap: 12px !important;
+/* ─── GPU-Accelerated Symbol Float Animations ──── */
+@keyframes float-star {
+  0%, 100% {
+    transform: translateY(-85%);
   }
+  50% {
+    transform: translateY(calc(-85% - 14px));
+  }
+}
+
+@keyframes float-triangle {
+  0%, 100% {
+    transform: translateY(0) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(-8deg);
+  }
+}
+
+.animate-float-star {
+  animation: float-star 3.4s ease-in-out infinite;
+}
+
+.animate-float-triangle {
+  animation: float-triangle 3.4s ease-in-out infinite;
 }
 

@@ -13,8 +13,8 @@ function FloatingSymbol({
   height,
   delay = 0,
   rotate = 0,
-  floatY = 10,
   className = "",
+  floatClass = "",
 }: {
   src: string;
   alt: string;
@@ -22,20 +22,19 @@ function FloatingSymbol({
   height: number;
   delay?: number; 
   rotate?: number;
-  floatY?: number;
   className?: string;
+  floatClass?: string;
 }) {
   const reduced = useSafeReducedMotion();
 
   return (
     <motion.div
-      className={`absolute pointer-events-none select-none ${className}`}
+      className={`absolute pointer-events-none select-none ${className} ${!reduced ? floatClass : ""}`}
       initial={{ opacity: 0, scale: 0.5, rotate: rotate - 18 }}
       animate={{
         opacity: 1,
         scale: 1,
         rotate,
-        y: reduced ? 0 : [0, -floatY, 0],
       }}
       transition={
         reduced
@@ -44,12 +43,6 @@ function FloatingSymbol({
               opacity: { delay, duration: 0.45, ease: "easeOut" },
               scale:   { delay, duration: 0.55, ease: [0.34, 1.56, 0.64, 1] },
               rotate:  { delay, duration: 0.55, ease: [0.34, 1.56, 0.64, 1] },
-              y: {
-                delay:    delay + 0.55,
-                duration: 3.4,
-                repeat:   Infinity,
-                ease:     "easeInOut",
-              },
             }
       }
     >
@@ -98,7 +91,7 @@ interface HeroProps {
 }
 
 export default function Hero({ placeholderRef }: HeroProps) {
-  // Mobile responsive layout icon alignment trigger
+  // Mobile responsive layout GPU floating animations trigger
 
   return (
     <section
@@ -128,7 +121,7 @@ export default function Hero({ placeholderRef }: HeroProps) {
         width={200}
         height={140}
         delay={0.35}
-        floatY={14}
+        floatClass="animate-float-star"
         className="
           left-1
           sm:left-10
@@ -185,7 +178,7 @@ export default function Hero({ placeholderRef }: HeroProps) {
         height={90}
         delay={0.5}
         rotate={-8}
-        floatY={9}
+        floatClass="animate-float-triangle"
         className="
           right-0
           sm:right-2

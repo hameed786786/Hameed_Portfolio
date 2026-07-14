@@ -344,7 +344,7 @@ function SpiderIcon({ className }: { className?: string }) {
 // ── MAIN SKILLS SECTION ──
 
 export default function Skills() {
-  // Mobile responsive layout scroll scrub config trigger
+  // Mobile responsive layout scroll scrub and mount config trigger
   const containerRef = useRef<HTMLDivElement>(null);
   const pathRef        = useRef<SVGPathElement>(null);
   const glowPathRef    = useRef<SVGPathElement>(null);
@@ -359,6 +359,9 @@ export default function Skills() {
 
   useEffect(() => {
     setMounted(true);
+    // Explicitly initialize state on mount
+    setIsMobile(window.innerWidth < 768);
+    
     let lastWidth = window.innerWidth;
     const handleResize = () => {
       const currentWidth = window.innerWidth;
@@ -367,7 +370,6 @@ export default function Skills() {
         setIsMobile(currentWidth < 768);
       }
     };
-    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -497,8 +499,8 @@ export default function Skills() {
             trigger: firstRow,
             start: "top 40%",
             endTrigger: lastRow,
-            end: isMobile ? "bottom 70%" : "bottom 85%",
-            scrub: isMobile ? true : 1.2,
+              end: isMobile ? "bottom 95%" : "bottom 85%",
+            scrub: 1.2,
           },
         });
 
